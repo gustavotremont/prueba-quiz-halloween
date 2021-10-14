@@ -1,3 +1,4 @@
+//inicializar firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, setDoc, query} from "https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js";
 
@@ -14,13 +15,14 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const correctAnswersArray = [] 
 
+//conectar con api y obtener preguntas
 const getQuestions = async () => {
     const respond = await fetch('https://opentdb.com/api.php?amount=10&category=15&difficulty=medium&type=multiple');
     const data = await respond.json();
     const questions = data.results.map(({question, correct_answer, incorrect_answers}) => {
         return {
             question: question,
-            correctAnswer: correct_answer.toLowerCase(),
+            correctAnswer: decodeURIComponent(escape(correct_answer.toLowerCase())),
             Answers: shuffleArray([...incorrect_answers, correct_answer])
         }
     })
@@ -31,20 +33,20 @@ const getQuestions = async () => {
             <h2>${question}</h2>
             <div id='answerContainer'>
                 <div>
-                    <label for='question-${index+1}-1'>${Answers[0]}</label>
-                    <input type='radio' id='question-${index+1}' name='question-${index+1}' value='${Answers[0].toLowerCase()}'>
+                    <label for='question_${index+1}_1'>${Answers[0]}</label>
+                    <input type='radio' id='question_${index+1}_1' name='question_${index+1}' value='${Answers[0].toLowerCase()}'>
                 </div>
                 <div>
-                    <label for='question-${index+1}-2'>${Answers[1]}</label>
-                    <input type='radio' id='question-${index+1}-2' name='question-${index+1}' value='${Answers[1].toLowerCase()}'>
+                    <label for='question_${index+1}_2'>${Answers[1]}</label>
+                    <input type='radio' id='question_${index+1}_2' name='question_${index+1}' value='${Answers[1].toLowerCase()}'>
                 </div>
                 <div>
-                    <label for='question-${index+1}-3'>${Answers[2]}</label>
-                    <input type='radio' id='question-${index+1}-3' name='question-${index+1}' value='${Answers[2].toLowerCase()}'>
+                    <label for='question_${index+1}_3'>${Answers[2]}</label>
+                    <input type='radio' id='question_${index+1}_3' name='question_${index+1}' value='${Answers[2].toLowerCase()}'>
                 </div>
                 <div>
-                    <label for='question-${index+1}-4'>${Answers[3]}</label>
-                    <input type='radio' id='question-${index+1}-4' name='question-${index+1}' value='${Answers[3].toLowerCase()}'>
+                    <label for='question_${index+1}_4'>${Answers[3]}</label>
+                    <input type='radio' id='question_${index+1}_4' name='question_${index+1}' value='${Answers[3].toLowerCase()}'>
                 </div>
             </div>
         </article>`
@@ -53,7 +55,21 @@ const getQuestions = async () => {
 }
 
 getQuestions().then(data => data)
-console.log(correctAnswersArray)
+
+document.getElementById('submit').addEventListener('click', (e) => {
+    e.preventDefault()
+
+    const form = document.getElementById('formBody')
+    const answers = [form.question_1.value, form.question_2.value, form.question_3.value, form.question_4.value, form.question_5.value, form.question_6.value, form.question_7.value, form.question_8.value, form.question_9.value, form.question_10.value]
+    let count = 0;
+    for(let i = 0; i<10; i++) {
+        if(answers[i] == correctAnswersArray[i]) count++
+    }
+
+    console.log(`has acertado ${count} de 10 preguntas`)
+    console.log(answers)
+    console.log(correctAnswersArray)
+})
 
 //Fisher-Yates algorith
 const shuffleArray = array => {
