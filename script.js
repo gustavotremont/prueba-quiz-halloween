@@ -28,7 +28,7 @@ const getQuestions = async () => {
         correctAnswersArray.push(correctAnswer)
         return `
         <article id='questionContainer'>
-            <h2>${question}</label>
+            <h2>${question}</h2>
             <div id='answerContainer'>
                 <div>
                     <label for='question-${index+1}-1'>${Answers[0]}</label>
@@ -53,6 +53,7 @@ const getQuestions = async () => {
 }
 
 getQuestions().then(data => data)
+console.log(correctAnswersArray)
 
 //Fisher-Yates algorith
 const shuffleArray = array => {
